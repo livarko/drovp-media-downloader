@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Backup media using yt-dlp.",
   "main": "index.js",
-	"homepage": "https://github.com/livarko/drovp-media-downloader",
-	"bugs": "https://github.com/livarko/drovp-media-downloader/issues",
-	"repository": "github:livarko/drovp-media-downloader",
+  "homepage": "https://github.com/livarko/drovp-media-downloader",
+  "bugs": "https://github.com/livarko/drovp-media-downloader/issues",
+  "repository": "github:livarko/drovp-media-downloader",
   "keywords": [
     "drovpplugin"
   ],
