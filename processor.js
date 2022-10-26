@@ -10,13 +10,12 @@ const FILENAME_REGEXPS = [
   /\[download\] ?(?<filename>.*) ?has already been downloaded( and merged)? ?$/im,
   /\[(ffmpeg|Merger)\] ?Merging formats into "(?<filename>.*)" *$/im,
 ];
-const MAIN_FILENAME_REGEXP = /\[result_filepath\](?<filename>[^\"]+)/;
+const MAIN_FILENAME_REGEXP = /echo "\[result_filepath\](?<filename>[^\"]+)/;
 
 module.exports = async ({input, options}, {dependencies, progress, output, title}) => {
   const ytdlpPath = dependencies['yt-dlp'];
   const args = [
-    '--encoding', 'utf8', '--no-warnings', '--netrc', '--restrict-filenames',
-    '--ffmpeg-location', path.dirname(dependencies.ffmpeg)
+    '--encoding', 'utf8', '--no-warnings', '--netrc', '--ffmpeg-location', path.dirname(dependencies.ffmpeg)
   ];
   let {destination, mode, resolution, outputTemplate} = options;
   const {url} = input;
@@ -53,8 +52,7 @@ module.exports = async ({input, options}, {dependencies, progress, output, title
       return;
   }
 
-  outputTemplate = outputTemplate ? `${outputTemplate}`.trim() : false;
-  if (outputTemplate) args.push('-o', outputTemplate);
+  args.push('-o', outputTemplate ? `${outputTemplate}`.trim() : `%(title.0:100)S [%(id)S].%(ext)S`);
 
   // Report final path
   // This turned out to produce incorrect outputs, as the echoed string had
@@ -77,7 +75,7 @@ module.exports = async ({input, options}, {dependencies, progress, output, title
   process.chdir(destination);
 
   return new Promise((resolve) => {
-    let fileName;
+    let filePath;
     const process = spawn(ytdlpPath, args, {cwd: destination});
 
     process.stdout.on('data', (buffer) => {
@@ -106,9 +104,9 @@ module.exports = async ({input, options}, {dependencies, progress, output, title
 
       const filenameString = filenameMatch?.groups?.filename.trim();
       if (filenameString) {
-        fileName = filenameString;
-        console.log('extracted path:', fileName);
-        title(path.basename(fileName));
+        filePath = path.resolve(destination, filenameString);
+        console.log('extracted path:', filePath);
+        title(path.basename(filenameString));
         return;
       }
     });
@@ -122,10 +120,10 @@ module.exports = async ({input, options}, {dependencies, progress, output, title
 
     process.on('close', async (code) => {
       if (code != 0) console.log(`child process exited with code ${code}`);
-      if (fileName) {
+      if (filePath) {
         try {
-          await fs.access(fileName);
-          output.file(fileName);
+          await fs.access(filePath);
+          output.file(filePath);
         } catch {
           output.warning(`Extracted file path doesn't exist. There were no errors, so the file should be where it's supposed to be, the plugin was just unable to extract the result filename from the yt-dlp output, because yt-dlp output sux and is very hard to parse by machines :(.`);
         }

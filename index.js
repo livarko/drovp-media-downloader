@@ -92,13 +92,12 @@ module.exports = (plugin) => {
       {
         name: 'outputTemplate',
         type: 'string',
-        default: '',
+        default: '%(title.0:100)S [%(id)S].%(ext)S',
         title: 'Output template',
         description:
-          `Customize how the output file should be named.<br>
-          By default, files are named <code>Title [ID].extension</code>.<br>
-          Read <a href="https://github.com/yt-dlp/yt-dlp#output-template">output template documentation</a> for all available tokens and format examples.<br>
-          Enter template without quotes.`,
+          `<b>IMPORTANT:</b> using strings without uppercase <code>S</code> conversion type will result in filesystem incompatible paths.<br>
+          <a href="https://github.com/yt-dlp/yt-dlp#output-template">Output template documentation</a>.
+          `,
       },
     ],
     operationPreparator: async (payload, utils) => {
