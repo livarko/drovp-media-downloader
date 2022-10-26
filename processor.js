@@ -17,7 +17,7 @@ module.exports = async ({input, options}, {dependencies, progress, output, title
   const args = [
     '--encoding', 'utf8', '--no-warnings', '--netrc', '--ffmpeg-location', path.dirname(dependencies.ffmpeg)
   ];
-  let {destination, mode, resolution, outputTemplate} = options;
+  let {destination, mode, resolution, outputTemplate, embedSubtitles} = options;
   const {url} = input;
   let hasError = false;
 
@@ -52,6 +52,7 @@ module.exports = async ({input, options}, {dependencies, progress, output, title
       return;
   }
 
+  if (embedSubtitles) args.push('--embed-subs');
   args.push('-o', outputTemplate ? `${outputTemplate}`.trim() : `%(title.0:100)S [%(id)S].%(ext)S`);
 
   // Report final path

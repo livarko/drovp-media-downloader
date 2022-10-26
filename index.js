@@ -90,6 +90,13 @@ module.exports = (plugin) => {
         isHidden: (_, options) => options.mode === 'extractAudio',
       },
       {
+        name: 'embedSubtitles',
+        type: 'boolean',
+        default: true,
+        title: 'Embed subtitles',
+        description: `Embed subtitles in final file when available.`,
+      },
+      {
         name: 'outputTemplate',
         type: 'string',
         default: '%(title.0:100)S [%(id)S].%(ext)S',
