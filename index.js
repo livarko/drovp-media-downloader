@@ -46,7 +46,7 @@ module.exports = (plugin) => {
         kind: 'directory',
         default: '',
         title: 'Destination',
-        description: `Download directory. If empty, your system's Downloads directory will be used. Hold <kb>ctrl</kbd> on drop to prompt for each drop.<br>
+        description: `Download directory. If empty, your system's Downloads directory will be used. Hold <kbd>Ctrl</kbd> on drop to prompt for each drop.<br>
         Also supports variables:<br>
         <b><code>\${tmp}</code></b> - platform's tmp directory<br>
         <b><code>\${home}</code></b> - platform's home directory<br>
@@ -102,7 +102,7 @@ module.exports = (plugin) => {
       },
     ],
     operationPreparator: async (payload, utils) => {
-      if (utils.modifiers === 'ctrl') {
+      if (utils.modifiers === 'Ctrl') {
         const result = await utils.showOpenDialog({
           title: `Destination directory`,
           properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
@@ -123,7 +123,7 @@ module.exports = (plugin) => {
       return payload;
     },
     modifierDescriptions: {
-      ctrl: `ask for destination (overwrites option)`,
+      Ctrl: `ask for destination (overwrites the option)`,
     },
   });
 };
