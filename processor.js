@@ -15,9 +15,10 @@ const MAIN_FILENAME_REGEXP = /echo "\[result_filepath\](?<filename>[^\"]+)/;
 module.exports = async ({input, options}, {dependencies, progress, output, title}) => {
   const ytdlpPath = dependencies['yt-dlp'];
   const args = [
-    '--encoding', 'utf8', '--no-warnings', '--netrc', '--ffmpeg-location', path.dirname(dependencies.ffmpeg)
+    '--encoding', 'utf8', '--no-warnings', '--netrc', '--ffmpeg-location', path.dirname(dependencies.ffmpeg),
+    '--embed-chapters'
   ];
-  let {destination, mode, resolution, outputTemplate, embedSubtitles} = options;
+  let {destination, mode, resolution, outputTemplate, embedSubtitles, subLangs, liveChat, cookiesFromBrowser} = options;
   const {url} = input;
   let hasError = false;
 
@@ -52,8 +53,14 @@ module.exports = async ({input, options}, {dependencies, progress, output, title
       return;
   }
 
-  if (embedSubtitles) args.push('--embed-subs');
+  if (embedSubtitles) {
+    args.push('--embed-subs');
+    const langs = [...subLangs.split(','), liveChat ? null : '-live_chat'].filter(x => !!x).join(',');
+    args.push('--sub-langs', langs);
+  }
+  if (!liveChat) args.push('--compat-options', 'no-live-chat');
   args.push('-o', outputTemplate ? `${outputTemplate}`.trim() : `%(title.0:100)S [%(id)S].%(ext)S`);
+  if (cookiesFromBrowser.trim().length > 0) args.push('--cookies-from-browser', cookiesFromBrowser.trim())
 
   // Report final path
   // This turned out to produce incorrect outputs, as the echoed string had

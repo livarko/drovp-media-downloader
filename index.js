@@ -97,6 +97,20 @@ module.exports = (plugin) => {
         description: `Embed subtitles in final file when available.`,
       },
       {
+        name: 'subLangs',
+        type: 'string',
+        default: 'all',
+        title: 'Subtitle languages',
+        description: `What languages to download. Example: <code>en.*,ja</code>. <a href="https://github.com/yt-dlp/yt-dlp#subtitle-options">Documentation</a>.`,
+      },
+      {
+        name: 'liveChat',
+        type: 'boolean',
+        default: false,
+        title: 'Live chat',
+        description: `Download live chat data.`,
+      },
+      {
         name: 'outputTemplate',
         type: 'string',
         default: '%(title.0:100)S [%(id)S].%(ext)S',
@@ -105,6 +119,14 @@ module.exports = (plugin) => {
           `<b>IMPORTANT:</b> using strings without uppercase <code>S</code> conversion type will result in filesystem incompatible paths.<br>
           <a href="https://github.com/yt-dlp/yt-dlp#output-template">Output template documentation</a>.
           `,
+      },
+      {
+        name: 'cookiesFromBrowser',
+        type: 'string',
+        default: '',
+        title: 'Cookies from browser',
+        description:
+          `Specify a browser cookie source identifier to extract cookies from for services that require auth this way. Syntax is <code>BROWSER[+KEYRING][:PROFILE][::CONTAINER]</code>. It can be as simple as <code>firefox</code>. For more search <code>cookies-from-browser</code> in <a href="https://github.com/yt-dlp/yt-dlp">documentation</a>.`,
       },
     ],
     operationPreparator: async (payload, utils) => {
