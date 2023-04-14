@@ -18,11 +18,10 @@ module.exports = async ({input, options}, {dependencies, progress, output, title
     '--encoding', 'utf8', '--no-warnings', '--netrc', '--ffmpeg-location', path.dirname(dependencies.ffmpeg),
     '--embed-chapters'
   ];
-  let {destination, mode, resolution, outputTemplate, embedSubtitles, subLangs, liveChat, cookiesFromBrowser} = options;
   const {url} = input;
   let hasError = false;
 
-  destination = destination.trim();
+  let destination = options.destination.trim();
   if (destination) {
     const variables = {};
     const lowercaseDestination = destination.toLowerCase();
@@ -46,21 +45,28 @@ module.exports = async ({input, options}, {dependencies, progress, output, title
       args.push('-x');
       break;
     case 'download':
-      args.push('-f', resolution);
+      args.push('-f', options.resolution);
       break;
     default:
       output.error(`Unknown mode "${options.mode}".`);
       return;
   }
 
-  if (embedSubtitles) {
+  if (options.embedSubtitles) {
     args.push('--embed-subs');
-    const langs = [...subLangs.split(','), liveChat ? null : '-live_chat'].filter(x => !!x).join(',');
+    const langs = [...options.subLangs.split(','), options.liveChat ? null : '-live_chat'].filter(x => !!x).join(',');
     args.push('--sub-langs', langs);
   }
-  if (!liveChat) args.push('--compat-options', 'no-live-chat');
-  args.push('-o', outputTemplate ? `${outputTemplate}`.trim() : `%(title.0:100)S [%(id)S].%(ext)S`);
-  if (cookiesFromBrowser.trim().length > 0) args.push('--cookies-from-browser', cookiesFromBrowser.trim())
+  if (!options.liveChat) args.push('--compat-options', 'no-live-chat');
+  args.push('-o', options.outputTemplate ? `${options.outputTemplate}`.trim() : `%(title.0:100)S [%(id)S].%(ext)S`);
+  if (options.cookiesFromBrowser.trim().length > 0) {
+    args.push('--cookies-from-browser', options.cookiesFromBrowser.trim())
+  }
+
+  // Ensure the output format supports requested embeddings
+  if (options.embedChapters || options.embedSubtitles) {
+    args.push('--remux-video', 'mkv', '--merge-output-format', 'mkv');
+  }
 
   // Report final path
   // This turned out to produce incorrect outputs, as the echoed string had
@@ -75,7 +81,7 @@ module.exports = async ({input, options}, {dependencies, progress, output, title
 
   console.log(`url:`, url);
   console.log(`destination:`, destination);
-  console.log(`mode:`, mode);
+  console.log(`mode:`, options.mode);
   console.log(`yt-dlp:`, ytdlpPath);
   console.log(`args:`, args.join(' '));
 

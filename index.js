@@ -90,11 +90,18 @@ module.exports = (plugin) => {
         isHidden: (_, options) => options.mode === 'extractAudio',
       },
       {
+        name: 'embedChapters',
+        type: 'boolean',
+        default: true,
+        title: 'Embed chapters',
+        description: `Embed chapters in final file when available. Forces output container to <code>mkv</code>.`,
+      },
+      {
         name: 'embedSubtitles',
         type: 'boolean',
         default: true,
         title: 'Embed subtitles',
-        description: `Embed subtitles in final file when available.`,
+        description: `Embed subtitles in final file when available. Forces output container to <code>mkv</code>.`,
       },
       {
         name: 'subLangs',
