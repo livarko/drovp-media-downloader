@@ -63,11 +63,6 @@ module.exports = async ({input, options}, {dependencies, progress, output, title
     args.push('--cookies-from-browser', options.cookiesFromBrowser.trim())
   }
 
-  // Ensure the output format supports requested embeddings
-  if (options.embedChapters || options.embedSubtitles) {
-    args.push('--remux-video', 'mkv', '--merge-output-format', 'mkv');
-  }
-
   // Report final path
   // This turned out to produce incorrect outputs, as the echoed string had
   // characters that can't be used in windows filesystem, but the actual file
@@ -139,7 +134,7 @@ module.exports = async ({input, options}, {dependencies, progress, output, title
           await fs.access(filePath);
           output.file(filePath);
         } catch {
-          output.warning(`Extracted file path doesn't exist. There were no errors, so the file should be where it's supposed to be, the plugin was just unable to extract the result filename from the yt-dlp output, because yt-dlp output sux and is very hard to parse by machines :(.`);
+          output.warning(`Extracted file path doesn't exist. This might just be an issue of file path containing weird characters, unless there were other errors, the file might still be in your destination.`);
         }
       } else if (!hasError) {
         output.warning(
