@@ -25,13 +25,14 @@ module.exports = async ({input, options}, {dependencies, progress, output, title
   if (destination) {
     const variables = {};
     const lowercaseDestination = destination.toLowerCase();
+    const normalizedDestination = destination.replaceAll(path.sep, path.posix.sep);
 
     for (const name of Object.keys(platformPaths)) {
       if (lowercaseDestination.includes(name)) variables[name] = await platformPaths[name]();
     }
 
     try {
-      destination = expandTemplateLiteral(destination, variables);
+      destination = expandTemplateLiteral(normalizedDestination, variables);
     } catch (error) {
       output.error(`Destination template error: ${error.message}`);
       return;
