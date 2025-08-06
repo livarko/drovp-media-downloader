@@ -59,6 +59,13 @@ module.exports = (plugin) => {
         `,
       },
       {
+        name: 'askDestination',
+        type: 'boolean',
+        default: false,
+        title: 'Ask destination',
+        description: `Always ask where to save files when dropped into a profile.`,
+      },
+      {
         name: 'mode',
         type: 'select',
         options: {
@@ -137,7 +144,7 @@ module.exports = (plugin) => {
       },
     ],
     operationPreparator: async (payload, utils) => {
-      if (utils.modifiers === 'Ctrl') {
+      if (utils.modifiers === 'Ctrl' || payload.options.askDestination) {
         const result = await utils.showOpenDialog({
           title: `Destination directory`,
           properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
